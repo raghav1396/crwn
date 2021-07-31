@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import FormInput from "../formInput/FormInput";
 import CustomButton from "../customButton/customButton";
-import { signInWithGoogle } from "../../firebase/firebase.utils";
+import { auth, signInWithGoogle } from "../../firebase/firebase.utils";
 import "./SignIn.scss";
 
 export default class SignIn extends Component {
@@ -17,9 +17,15 @@ export default class SignIn extends Component {
       [evt.target.name]: evt.target.value,
     });
   };
-  handleSubmit = (evt) => {
+  handleSubmit = async (evt) => {
     evt.preventDefault();
-    this.setState({ email: "", password: "" });
+    const { email, password } = this.state;
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      this.setState({ email: "", password: "" });
+    } catch (err) {
+      console.error(err);
+    }
   };
   render() {
     const { email, password } = this.state;
